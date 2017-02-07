@@ -33,7 +33,7 @@ public class HomeController {
         return new ModelAndView("redirect:/");
     }
 
-    @RequestMapping("/userList")
+    @RequestMapping("/admin/userList")
     public ModelAndView getUserList() {
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("user", userService.findAll());
@@ -56,19 +56,19 @@ public class HomeController {
         return new ModelAndView("redirect:/");
     }
 
-    @RequestMapping(value = "/editplayer/{id}")
-    public ModelAndView edit(@PathVariable Long id) {
+    @RequestMapping(value = "/admin/editplayer/{id}")
+    public ModelAndView editplayer(@PathVariable Long id) {
         Player player = userService.findPlayerById(id);
         return new ModelAndView("playereditform", "command", player);
     }
 
-    @RequestMapping(value = "/editsave", method = RequestMethod.POST)
+    @RequestMapping(value = "/admin/editsave", method = RequestMethod.POST)
     public ModelAndView editsave(@ModelAttribute("player") Player player) {
         userService.updatePlayer(player);
-        return new ModelAndView("redirect:/userList");
+        return new ModelAndView("redirect:/admin/userList");
     }
 
-    @RequestMapping(value = "/deleteplayer/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/admin/deleteplayer/{id}", method = RequestMethod.GET)
     public ModelAndView delete(@PathVariable Long id) {
         userService.deletePlayer(id);
         return new ModelAndView("redirect:/userList");

@@ -11,7 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class LinkNavigation {
 
-    @RequestMapping(value="/", method= RequestMethod.GET)
+ /*   @RequestMapping(value="/", method= RequestMethod.GET)
     public ModelAndView homePage() {
         return new ModelAndView("index");
     }
@@ -20,12 +20,12 @@ public class LinkNavigation {
     public ModelAndView indexPage() {
         return new ModelAndView("index");
     }
-
-    @RequestMapping(value="/sec/player", method=RequestMethod.GET)
+*/
+   /* @RequestMapping(value="/sec/player", method=RequestMethod.GET)
     public ModelAndView moderatorPage() {
         return new ModelAndView("player");
     }
-
+*/
     @RequestMapping(value="/admin/first", method=RequestMethod.GET)
     public ModelAndView firstAdminPage() {
         return new ModelAndView("admin-first");
