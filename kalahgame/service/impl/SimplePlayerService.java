@@ -6,32 +6,33 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.kalahgame.domain.Player;
+import ua.kalahgame.domain.Role;
 import ua.kalahgame.infrastructure.passwordGenerateAndHash.PasswordGenerator;
 import ua.kalahgame.infrastructure.passwordGenerateAndHash.PasswordHash;
 import ua.kalahgame.repository.PlayerRepository;
+import ua.kalahgame.repository.RoleRepository;
 import ua.kalahgame.service.PlayerService;
-
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Optional;
 
 /**
  * Created by a.lomako on 1/30/2017.
  */
 @Service
-public class SimplePlayerService implements PlayerService {
-    private PlayerRepository playerRepository;
+public class SimplePlayerService implements PlayerService  {
 
     @Autowired
+    private PlayerRepository playerRepository;
 
+
+    @Autowired
     public SimplePlayerService(PlayerRepository playerRepository) {
         this.playerRepository = playerRepository;
     }
 
-
+@Autowired
+    public RoleRepository roleRepository;
 
     private SimpleMailMessage templateMessage;
 
@@ -62,27 +63,29 @@ public class SimplePlayerService implements PlayerService {
     }
 
     @Override
+    public Player getUserByEmail(String email) {
+          System.out.println(playerRepository.findOne(playerRepository.getUserByEmail(email)).toString());
+        return playerRepository.findOne(playerRepository.getUserByEmail(email));
+    }
+
+    @Override
     public Iterable<Player> findAll() {
         return playerRepository.findAll();
     }
 
 
     @Override
-    public Optional<Player> getUser(String player_login) {
-        return null;
+    public Long getUserByLogin(String player_login) {
+        return playerRepository.getUserByLogin(player_login);
     }
 
     @Override
     public Player addPlayer(Player player) {
 
-        //     System.out.println("_-------__-_________--");
-       /* Player domainUser = playerRepository.findOne(playerRepository.getUserByLogin(player.getPlayer_login()));
-        System.out.println(domainUser);*/
-        //  player.setPlayer_password(PasswordHash.hash(player.getPlayer_password().toCharArray()));
-       /* player.setFirstName(player.getFirstName());
-        player.setLastName(player.getLastName());
-        player.setGender(player.getGender());
-        player.setCity(player.getCity());*/
+        player.setPlayer_password(PasswordHash.hash(player.getPlayer_password().toCharArray()));
+
+        player.setRole(roleRepository.findOne((long) 2));
+
         return playerRepository.save(player);
     }
 
@@ -129,11 +132,22 @@ public class SimplePlayerService implements PlayerService {
     private SimpleMailMessage generateEmailMessage(Long id, char[] password) {
         SimpleMailMessage msg = new SimpleMailMessage(this.templateMessage);
         Player player = findPlayerById(id);
-        //  Vendor vendor = findById(id);
         msg.setTo(player.getEmail());
         msg.setText(String.format(msg.getText(), player.getEmail(), new String(password)));
         return msg;
     }
+//Check write, conditions and so on :)
+    @Override
+    public void deletePlayer(Long id) {
+        playerRepository.delete(id);
+    }
+
+    @Override
+    public Player updatePlayer(Player player) {
+        player.setRole(roleRepository.findOne(player.getRole().getId()));
+        return playerRepository.save(player);
+    }
+
     private void savePlayerPassword(Long id, String password) {
 
         Player player = findPlayerById(id);
@@ -144,5 +158,6 @@ if(player != null) {
 }
  else
     System.out.println("No such email in db");
+
            }
 }

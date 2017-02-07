@@ -1,19 +1,18 @@
 package ua.kalahgame.controller;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+
+import java.util.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import ua.kalahgame.domain.Player;
 import ua.kalahgame.service.PlayerService;
+
+
 @Controller
 public class HomeController {
 
@@ -23,12 +22,7 @@ public class HomeController {
     @RequestMapping("/register")
     public ModelAndView getRegisterForm(@ModelAttribute("user") Player user,
                                         BindingResult result) {
-
-        //  System.out.println(userService.findPlayerByLogin("test"));
-              Map<String, Object> model = new HashMap<String, Object>();
-        System.out.println("Register Form");
-
-
+        Map<String, Object> model = new HashMap<String, Object>();
         return new ModelAndView("Register", "model", model);
     }
 
@@ -36,9 +30,7 @@ public class HomeController {
     public ModelAndView saveUserData(@ModelAttribute("user") Player user,
                                      BindingResult result) {
         userService.addPlayer(user);
-        System.out.println("Save User Data");
-
-        return new ModelAndView("redirect:/index.html");
+        return new ModelAndView("redirect:/");
     }
 
     @RequestMapping("/userList")
@@ -46,29 +38,39 @@ public class HomeController {
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("user", userService.findAll());
         return new ModelAndView("UserDetails", model);
-
     }
+
     @RequestMapping("/getPlayerInfo")
-    public ModelAndView getUserInformation(Long id) {
-        Map<String, Object> model = new HashMap<String, Object>();
-        model.put("user", userService.findPlayerById(id));
-        return new ModelAndView("UserDetail", model);
-
-    }
-    @RequestMapping(value="/loggedUser", method = RequestMethod.GET)
-    public String printUser(ModelMap model) {
-
+    public ModelAndView getUserInformation() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String name = auth.getName(); //get logged in username
-
-        model.addAttribute("username", name);
-        return "hello";
+        Player player = userService.findPlayerById(userService.getUserByLogin(auth.getName()));
+        Map<String, Object> model = new HashMap<String, Object>();
+        model.put("player", player);
+        return new ModelAndView("UserDetail", model);
     }
 
- /*   @RequestMapping(value = "/generatePassword/{id}", method = RequestMethod.PUT)
-    public void generatePasswordForVendor(*//*@PathVariable Long id, @Validated @RequestBody VendorDTO vendorDTO,
-                                          BindingResult bindingResult*//*) {
+    @RequestMapping(value = "/generatePassword")
+    public ModelAndView generatePasswordForPlayer(String email) {
+        Player player = userService.getUserByEmail(email);
+        userService.generatePasswordAndSendByMail(player.getId());
+        return new ModelAndView("redirect:/");
+    }
 
-        return userService.generatePasswordAndSendByMail(player.getId());
-    }*/
+    @RequestMapping(value = "/editplayer/{id}")
+    public ModelAndView edit(@PathVariable Long id) {
+        Player player = userService.findPlayerById(id);
+        return new ModelAndView("playereditform", "command", player);
+    }
+
+    @RequestMapping(value = "/editsave", method = RequestMethod.POST)
+    public ModelAndView editsave(@ModelAttribute("player") Player player) {
+        userService.updatePlayer(player);
+        return new ModelAndView("redirect:/userList");
+    }
+
+    @RequestMapping(value = "/deleteplayer/{id}", method = RequestMethod.GET)
+    public ModelAndView delete(@PathVariable Long id) {
+        userService.deletePlayer(id);
+        return new ModelAndView("redirect:/userList");
+    }
 }

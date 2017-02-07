@@ -12,4 +12,7 @@ public interface PlayerRepository extends CrudRepository<Player, Long> {
 
     @Query(nativeQuery = true, value =  "SELECT  u.player_id FROM Users u WHERE u.player_login = :player_login")
     Long getUserByLogin(@Param("player_login") String player_login);
+
+    @Query(nativeQuery = true, value =  "SELECT  u.player_id FROM Users u WHERE u.player_email = :player_email")
+    Long getUserByEmail(@Param("player_email") String player_email);
 }

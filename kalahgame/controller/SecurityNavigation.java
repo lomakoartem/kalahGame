@@ -23,9 +23,13 @@ public class SecurityNavigation {
         return modelAndView;
     }
 
+    @RequestMapping(value="/password-recovery", method= RequestMethod.GET)
+    public ModelAndView passwordRecovert() {
+        return new ModelAndView("passwordRecovery");
+    }
+
     @RequestMapping(value="/success-login", method=RequestMethod.GET)
     public ModelAndView successLogin() {
         return new ModelAndView("success-login");
     }
-
 }

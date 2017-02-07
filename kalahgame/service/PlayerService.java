@@ -12,7 +12,7 @@ public interface PlayerService {
 
     Player findPlayerById(Long id);
 
-    Optional<Player> getUser(String player_login);
+    Long getUserByLogin(String player_login);
 
     Player addPlayer(Player player);
 
@@ -24,4 +24,9 @@ public interface PlayerService {
 
     boolean sendPasswordByMail(Long id, char[] password);
 
+    Player getUserByEmail(String email);
+
+    Player updatePlayer(Player player);
+
+    void deletePlayer(Long id);
 }

@@ -10,13 +10,13 @@ import java.util.Set;
 @Table(name = "role")
 public class Role {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
 
-    @OneToMany(cascade=CascadeType.ALL)
-    @JoinTable(name="user_roles",
+    @OneToMany(cascade=CascadeType.MERGE)
+    @JoinTable(name="user_role",
             joinColumns = {@JoinColumn(name="role_id", referencedColumnName="id")},
             inverseJoinColumns = {@JoinColumn(name="player_id", referencedColumnName="player_id")}
     )
