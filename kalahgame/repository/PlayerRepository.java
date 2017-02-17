@@ -4,10 +4,13 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ua.kalahgame.domain.Player;
+import ua.kalahgame.infrastructure.exceptions.EntityNotFoundException;
+
 /**
  * Created by a.lomako on 1/30/2017.
  */
 @Repository
+
 public interface PlayerRepository extends CrudRepository<Player, Long> {
 
     @Query(nativeQuery = true, value =  "SELECT  u.player_id FROM Users u WHERE u.player_login = :player_login")

@@ -1,5 +1,6 @@
 package ua.kalahgame.domain;
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -14,6 +15,9 @@ public class Player{
     @Column(name = "player_id")
     private Long id;
 
+
+    @Column
+    private boolean inTurn;
 
 
     @Column(name = "player_first_name")
@@ -36,6 +40,17 @@ public class Player{
     @Column(name = "player_email")
     private String email;
 
+    @Column
+    private int[] pitsForPlayer;
+    @Column
+    private int kalahForPlayer;
+    @OneToMany(mappedBy = "initialFirstPlayer", cascade = CascadeType.ALL)
+
+    private List<Game> gamesAsInitialPlayer1;
+
+    @OneToMany(mappedBy = "initialSecondPlayer", cascade = CascadeType.ALL)
+
+    private List<Game> gamesAsInitialPlayer2;
 
     @OneToOne(cascade=  CascadeType.MERGE)
     @JoinTable(name="user_role",
@@ -108,6 +123,46 @@ public class Player{
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public boolean isInTurn() {
+        return inTurn;
+    }
+
+    public void setInTurn(boolean inTurn) {
+        this.inTurn = inTurn;
+    }
+
+    public int[] getPitsForPlayer() {
+        return pitsForPlayer;
+    }
+
+    public void setPitsForPlayer(int[] pitsForPlayer) {
+        this.pitsForPlayer = pitsForPlayer;
+    }
+
+    public int getKalahForPlayer() {
+        return kalahForPlayer;
+    }
+
+    public void setKalahForPlayer(int kalahForPlayer) {
+        this.kalahForPlayer = kalahForPlayer;
+    }
+
+    public List<Game> getGamesAsInitialPlayer1() {
+        return gamesAsInitialPlayer1;
+    }
+
+    public void setGamesAsInitialPlayer1(List<Game> gamesAsInitialPlayer1) {
+        this.gamesAsInitialPlayer1 = gamesAsInitialPlayer1;
+    }
+
+    public List<Game> getGamesAsInitialPlayer2() {
+        return gamesAsInitialPlayer2;
+    }
+
+    public void setGamesAsInitialPlayer2(List<Game> gamesAsInitialPlayer2) {
+        this.gamesAsInitialPlayer2 = gamesAsInitialPlayer2;
     }
 
     @Override

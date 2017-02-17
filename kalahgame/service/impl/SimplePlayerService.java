@@ -4,9 +4,11 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ua.kalahgame.domain.Player;
 import ua.kalahgame.domain.Role;
+import ua.kalahgame.infrastructure.exceptions.EntityNotFoundException;
 import ua.kalahgame.infrastructure.passwordGenerateAndHash.PasswordGenerator;
 import ua.kalahgame.infrastructure.passwordGenerateAndHash.PasswordHash;
 import ua.kalahgame.repository.PlayerRepository;
@@ -64,8 +66,13 @@ public class SimplePlayerService implements PlayerService  {
 
     @Override
     public Player getUserByEmail(String email) {
-          System.out.println(playerRepository.findOne(playerRepository.getUserByEmail(email)).toString());
-        return playerRepository.findOne(playerRepository.getUserByEmail(email));
+        Player player;
+       try {player = playerRepository.findOne(playerRepository.getUserByEmail(email));}
+           catch(Exception e)
+           {
+               throw new UsernameNotFoundException("Error in retrieving user");
+           }
+        return player;
     }
 
     @Override

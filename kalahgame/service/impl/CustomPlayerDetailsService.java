@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.kalahgame.domain.Player;
+import ua.kalahgame.infrastructure.exceptions.EntityNotFoundException;
 import ua.kalahgame.infrastructure.passwordGenerateAndHash.PasswordHash;
 import ua.kalahgame.repository.PlayerRepository;
 
@@ -30,23 +31,27 @@ public class CustomPlayerDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String login)
             throws UsernameNotFoundException {
-        Player domainUser = playerRepository.findOne(playerRepository.getUserByLogin(login));
-        boolean enabled = true;
-        boolean accountNonExpired = true;
-        boolean credentialsNonExpired = true;
-        boolean accountNonLocked = true;
-        PasswordHash passwordHash;
-        return new User(
-                domainUser.getPlayer_login(),
-                domainUser.getPlayer_password(),
-                enabled,
-                accountNonExpired,
-                credentialsNonExpired,
-                accountNonLocked,
-                getAuthorities(domainUser.getRole().getId())
-        );
-    }
+        try {
 
+            Player domainUser = playerRepository.findOne(playerRepository.getUserByLogin(login));
+            boolean enabled = true;
+            boolean accountNonExpired = true;
+            boolean credentialsNonExpired = true;
+            boolean accountNonLocked = true;
+            PasswordHash passwordHash;
+            return new User(
+                    domainUser.getPlayer_login(),
+                    domainUser.getPlayer_password(),
+                    enabled,
+                    accountNonExpired,
+                    credentialsNonExpired,
+                    accountNonLocked,
+                    getAuthorities(domainUser.getRole().getId())
+            );
+        } catch (Exception e) {
+            throw new UsernameNotFoundException("Error in retrieving user");
+        }
+    }
     public Collection<? extends GrantedAuthority> getAuthorities(Long role) {
 
         List<GrantedAuthority> authList = getGrantedAuthorities(getRoles(role));
